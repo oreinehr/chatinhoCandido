@@ -1,4 +1,5 @@
 const salaModel = require('../models/salaModel');
+const usuarioModel = require('../models/usuarioModel');
 
 exports.get = async (req, res) => {
     return await salaModel.listarSalas();
@@ -6,44 +7,60 @@ exports.get = async (req, res) => {
 
 exports.entrar = async (iduser, idsala) => {
     const sala = await salaModel.buscarSala(idsala);
-    let usuarioModel = require('../models/usuarioModel');
     let user = await usuarioModel.buscarUsuario(iduser);
-    console.log(sala);
-    console.log(user);
-    user.sala={_id:sala._id, nome:sala.nome, tipo:sala.tipo};
-    if (await usuarioModel.alterarUsuario(user)) {
-      return {msg:"OK", timestamp:timestamp=Date.now()};
+    
+    if (!sala || !user) {
+        return { msg: "Sala ou usuário não encontrado", timestamp: Date.now() };
     }
-    return false;
+
+    user.sala = { _id: sala._id, nome: sala.nome, tipo: sala.tipo };
+    
+    if (await usuarioModel.alterarUsuario(user)) {
+        return { msg: "OK", timestamp: Date.now() };
+    }
+    return { msg: "Erro ao atualizar usuário", timestamp: Date.now() };
+};
+
+exports.sair = async (iduser) => {
+    let user = await usuarioModel.buscarUsuario(iduser);
+    
+    if (!user) {
+        return { msg: "Usuário não encontrado", timestamp: Date.now() };
+    }
+
+    user.sala = null;
+    
+    if (await usuarioModel.alterarUsuario(user)) {
+        return { msg: "OK", timestamp: Date.now() };
+    }
+    return { msg: "Erro ao atualizar usuário", timestamp: Date.now() };
 };
 
 exports.enviarMensagem = async (nick, msg, idsala) => {
     const sala = await salaModel.buscarSala(idsala);
 
-    if (!sala.msgs) {
-      sala.msgs=[];
+    if (!sala) {
+        return { msg: "Sala não encontrada", timestamp: Date.now() };
     }
 
-    timestamp=Date.now();
+    if (!sala.msgs) {
+        sala.msgs = [];
+    }
 
-    sala.msgs.push(
-      {
-        timestamp:timestamp,
-        msg:msg,
-        nick:nick
-      }
-    );
+    const timestamp = Date.now();
+
+    sala.msgs.push({ timestamp, msg, nick });
 
     let resp = await salaModel.atualizarMensagens(sala);
 
-    return {"msg":"OK", "timestamp":timestamp};
+    return { msg: "OK", timestamp };
 };
 
 exports.buscarMensagens = async (idsala, timestamp) => {
     let mensagens = await salaModel.buscarMensagens(idsala, timestamp);
     
     return {
-      "timestamp":mensagens[mensagens.length - 1].timestamp,
-      "msgs":mensagens
+        timestamp: mensagens[mensagens.length - 1]?.timestamp || timestamp,
+        msgs: mensagens
     };
 };
