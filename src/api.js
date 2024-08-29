@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const app = express();
 
 app.use(express.urlencoded({extended:true}));
@@ -7,7 +8,7 @@ app.use(express.json());
 const router = express.Router();
 
 app.use('/', router.get('/', (req, res) => {
-    res.sendFile(__dirname + './views/index.html');
+    res.sendFile(path.join(__dirname, 'public', 'views', 'index.html'));
 }));
 
 app.use('/', router.get('/sobre', (req, res, next) => {
