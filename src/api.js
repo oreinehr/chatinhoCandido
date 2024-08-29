@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-const path = require('path');  
 
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
@@ -8,9 +7,8 @@ app.use(express.json());
 const router = express.Router();
 
 app.use('/', router.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'views', 'index.html'));
+    res.sendFile(__dirname + './views/index.html');
 }));
-
 
 app.use('/', router.get('/sobre', (req, res, next) => {
     res.status(200).send ({
@@ -65,6 +63,5 @@ app.use("/sala/listar", router.get("/sala/listar", async (req, res) => {
     let resp = await salaController.buscarMensagens(req.query.idSala, req.query.timestamp);
     res.status(200).send(resp);
 }))
-
 
 module.exports = app;
