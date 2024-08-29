@@ -22,18 +22,35 @@ exports.entrar = async (iduser, idsala) => {
 };
 
 exports.sair = async (iduser) => {
-    let user = await usuarioModel.buscarUsuario(iduser);
-    
-    if (!user) {
-        return { msg: "Usuário não encontrado", timestamp: Date.now() };
-    }
+  console.log("ID do usuário que deseja sair:", iduser);  // Log do ID do usuário
 
-    user.sala = null;
-    
-    if (await usuarioModel.alterarUsuario(user)) {
-        return { msg: "OK", timestamp: Date.now() };
-    }
-    return { msg: "Erro ao atualizar usuário", timestamp: Date.now() };
+  // Buscar o usuário
+  let user = await usuarioModel.buscarUsuario(iduser);
+  console.log("Usuário encontrado:", user);
+
+  if (user) {
+      // Se o usuário estiver em uma sala
+      if (user.sala) {
+          console.log("Sala atual do usuário:", user.sala);
+
+          // Atualizar o usuário para remover a sala
+          user.sala = null;
+
+          // Salvar as alterações no usuário
+          let resultado = await usuarioModel.alterarUsuario(user);
+          console.log("Resultado ao alterar usuário:", resultado);
+
+          if (resultado) {
+              return { msg: "Usuário saiu da sala com sucesso", timestamp: Date.now() };
+          } else {
+              return { msg: "Falha ao atualizar o usuário" };
+          }
+      } else {
+          return { msg: "Usuário não está em nenhuma sala" };
+      }
+  } else {
+      return { msg: "Usuário não encontrado" };
+  }
 };
 
 exports.enviarMensagem = async (nick, msg, idsala) => {

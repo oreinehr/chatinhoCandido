@@ -1,24 +1,31 @@
 const jwt = require('jsonwebtoken');
 
-const key = process.env.SECRET_KEY;
-
-function checkToken(token, iduser, key) {
-    try {
-        const decoded = jwt.verify(token, key);
-        return decoded.iduser === iduser;
-    } catch (err) {
-        return false;
+async function checkToken (token, id, key) {
+    return jwt.verify(token, key, (err, decoded) => {
+        let autorizacao = false;
+        if (err) {
+            autorizacao = false;
+        }
+        if (decoded) {
+            if (decoded.id == id) {
+                autorizacao = true;
+            }
+            else {
+                autorizacao = false;
+            }
+        }
+        return autorizacao;
     }
-}
+)};
 
-function setToken(id, key) {
-    console.log("id: " + id);
+async function setToken (id, key) {
+    console.log("id: "+id);
 
     if (id) {
-        return jwt.sign({ id }, key, { expiresIn: '8h' }); // Alterado para string com 'h' para horas
+        return jwt.sign({id}, key, {expiresIn: 28800});
     }
     return false;
-}
+};
 
 module.exports = {
     checkToken,
