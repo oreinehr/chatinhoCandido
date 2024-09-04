@@ -1,5 +1,6 @@
 const salaModel = require('../models/salaModel');
 
+
 exports.get = async (req, res) => {
     return await salaModel.listarSalas();
 };  
@@ -48,12 +49,9 @@ exports.buscarMensagens = async (idsala, timestamp) => {
     };
 };
 
-// controllers/salaController.js
-const User = require('../models/User'); // Ajuste o caminho conforme necessário
-
 exports.sair = async (iduser, idsala) => {
   const sala = await salaModel.buscarSala(idsala);
-  let usuarioModel=require('../model/usuarioModel');
+  let usuarioModel=require('../models/usuarioModel');
   let user= await usuarioModel.buscarUsuario(iduser);
   console.log(user)
   console.log(sala)
@@ -63,7 +61,3 @@ exports.sair = async (iduser, idsala) => {
       return { msg: "Saiu da sala", timestamp: timestamp = Date.now() };
   }
 }
-
-module.exports = {
-    sair
-};

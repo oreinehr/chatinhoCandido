@@ -44,4 +44,10 @@ let updateOne = async (collection, object, param) => {
     return result;
 };
 
-module.exports = { findAll, insertOne, findOne, updateOne };
+let deleteOne = async (collection, param) => {
+    const db = await connect();
+    console.log(param)
+    return await db.collection(collection).deleteOne({ '_id': new ObjectId(param) });
+};
+
+module.exports = { findAll, insertOne, findOne, updateOne, deleteOne };

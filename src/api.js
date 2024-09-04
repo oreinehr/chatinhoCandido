@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+const salaController = require('../src/controllers/salaController');
+
 
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
@@ -67,7 +69,7 @@ app.use("/sala/listar", router.get("/sala/listar", async (req, res) => {
 
 app.use("/", router.delete("/sala/sair", async (req, res) => {
     const token = require("./util/token");
-    const salaController = require("../src/controllers/salaControllers.js");
+    const salaController = require("../src/controllers/salaController");
     if (!token.checkToken(req.headers.token, req.headers.iduser, req.headers.nick)){ 
     
         return false;

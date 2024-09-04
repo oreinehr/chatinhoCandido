@@ -1,5 +1,7 @@
 require("dotenv").config();
 const app = require("../src/api");      
+const salaController = require('../src/controllers/salaController');
+
 
 app.use((req, res, next) => {
     next();
