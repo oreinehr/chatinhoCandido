@@ -65,4 +65,16 @@ app.use("/sala/listar", router.get("/sala/listar", async (req, res) => {
     res.status(200).send(resp);
 }))
 
+app.use("/", router.delete("/sala/sair", async (req, res) => {
+    const token = require("./util/token");
+    const salaController = require("../src/controllers/salaControllers.js");
+    if (!token.checkToken(req.headers.token, req.headers.iduser, req.headers.nick)){ 
+    
+        return false;
+    }
+    const resp = await salaController.sair(req.headers.iduser, req.query.idSala)
+    res.status(200).send(resp)
+
+}))
+
 module.exports = app;

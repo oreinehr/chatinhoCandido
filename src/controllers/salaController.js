@@ -47,3 +47,23 @@ exports.buscarMensagens = async (idsala, timestamp) => {
       "msgs":mensagens
     };
 };
+
+// controllers/salaController.js
+const User = require('../models/User'); // Ajuste o caminho conforme necessário
+
+exports.sair = async (iduser, idsala) => {
+  const sala = await salaModel.buscarSala(idsala);
+  let usuarioModel=require('../model/usuarioModel');
+  let user= await usuarioModel.buscarUsuario(iduser);
+  console.log(user)
+  console.log(sala)
+  user.sala = {}
+  await usuarioModel.alterarUsuario(user);
+  if (await usuarioModel.alterarUsuario(user)) {
+      return { msg: "Saiu da sala", timestamp: timestamp = Date.now() };
+  }
+}
+
+module.exports = {
+    sair
+};
